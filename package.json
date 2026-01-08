@@ -1,5 +1,5 @@
 {
-  "name": "heatshrink-ts",
+  "name": "heatshrink-compression-ts",
   "version": "0.1.0",
   "description": "A typescript implementation of the heatshrink compression library",
   "keywords": [],
@@ -9,10 +9,10 @@
   "files": [
     "dist"
   ],
-  "author": "Tim Burke <tim@arch-iot.com>",
+  "author": "491239 <lzx491378583@gmail.com>",
   "repository": {
     "type": "git",
-    "url": "https://github.com/iotile/heatshrink-ts.git"
+    "url": "https://github.com/491239/heatshrink-ts.git"
   },
   "license": "ISC",
   "engines": {

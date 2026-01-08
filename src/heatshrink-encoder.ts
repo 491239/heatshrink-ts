@@ -22,16 +22,6 @@ class BitWriter {
         this.buffer = new Uint8Array(initialSize);
     }
 
-    private ensure(needed: number) {
-        if (this.pos + needed <= this.buffer.length) {
-            return;
-        }
-        let newSize = Math.max(this.buffer.length * 2, this.pos + needed);
-        const nb = new Uint8Array(newSize);
-        nb.set(this.buffer.subarray(0, this.pos));
-        this.buffer = nb;
-    }
-
     writeBits(value: number, count: number) {
         if (count <= 0) return;
         // Write from MSB to LSB of the 'count' bits
@@ -63,6 +53,16 @@ class BitWriter {
             this.bitIndex = 1 << 7;
         }
         return this.buffer.subarray(0, this.pos);
+    }
+
+    private ensure(needed: number) {
+        if (this.pos + needed <= this.buffer.length) {
+            return;
+        }
+        let newSize = Math.max(this.buffer.length * 2, this.pos + needed);
+        const nb = new Uint8Array(newSize);
+        nb.set(this.buffer.subarray(0, this.pos));
+        this.buffer = nb;
     }
 }
 
