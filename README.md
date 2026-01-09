@@ -25,24 +25,24 @@ a device using the heatshrink library.  It is written in typescript and distribu
 ```shell
 npm install heatshrink-compression-ts
 ```
-
-The primary class is the `HeatshrinkDecoder` object that can take in compressed data and turn it back into uncompressed data.
-
 ```typescript
-import { HeatshrinkEncoder } from "../src/heatshrink-encoder";
-import { HeatshrinkDecoder } from "../src/heatshrink-decoder";
+import { HeatshrinkDecoder } from "heatshrink-compression-ts";
+import { HeatshrinkEncoder } from "heatshrink-compression-ts";
 
-const encoder = new HeatshrinkEncoder(12, 4);
-const decoder = new HeatshrinkDecoder(12, 4, 1024);
+const WINDOW_BITS = 8;
+const LOOKAHEAD_BITS = 4;
+const INPUT_BUFFER_LENGTH = 64;
 
-const text = "This is a test. This is a test. This is a test.";
-const input = Buffer.from(text, "utf8");
-const compressed = encoder.compress(input);
-console.log("Compressed bytes:", compressed.byteLength);
+const txt = new TextEncoder().encode('test test');
+let encodedInput = new HeatshrinkEncoder(WINDOW_BITS, LOOKAHEAD_BITS).compress(txt);
 
-decoder.process(compressed);
-const out = decoder.getOutput();
-console.log(Buffer.from(out).toString("utf8"), text);
+let decoder = new HeatshrinkDecoder(WINDOW_BITS, LOOKAHEAD_BITS, INPUT_BUFFER_LENGTH);
+decoder.process(encodedInput);
+
+let output = decoder.getOutput();
+
+let outputString = new TextDecoder().decode(output);
+console.log("Decoded output: " + outputString);
 ```
 
 There are 2 key parameters that need to match between the encoder and decoder:
