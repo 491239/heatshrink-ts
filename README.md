@@ -1,4 +1,4 @@
-# Typescript Decoder for Heatshrink
+# Typescript Encoder and Decoder for Heatshrink
 
 [![Travis](https://img.shields.io/travis/iotile/heatshrink-ts.svg)](https://travis-ci.org/iotile/heatshrink-ts)
 [![Coverage Status](https://coveralls.io/repos/github/iotile/heatshrink-ts/badge.svg?branch=master)](https://coveralls.io/github/iotile/heatshrink-ts?branch=master)
@@ -6,42 +6,43 @@
 [![npm](https://img.shields.io/npm/v/heatshrink-ts.svg)](https://www.npmjs.com/package/heatshrink-ts)
 
 ### Introduction
+Forked from [iotile/heatshrink-ts](https://github.com/iotile/heatshrink-ts)
+
+Thank you [@Tim Burke](https://github.com/timburke)
 
 Heatshrink is a compression library that can be used in very low resource microcontroller devices.  It is based on LZSS encoding, which 
 looks for repeated strings of characters and replaces them with references to a previous occurence rather than repeating them.
 
 You can read more details at the repository for the original C implementation of [heatshrink](https://github.com/atomicobject/heatshrink/).
 
-This typescript package only implements the heatshrink decoding process so it can decode compressed data that it receives from
-a device using the heatshrink library.  It is written in typescript and distributed on NPM for easy installation and usage.
+~~This typescript package only implements the heatshrink decoding process so it can decode compressed data that it receives from
+a device using the heatshrink library.  It is written in typescript and distributed on NPM for easy installation and usage.~~
+
+**Now there is encoder too.**
 
 ### Installation and Basic Usage
 
 ```shell
-npm install heatshrink-ts
+npm install heatshrink-compression-ts
 ```
 
 The primary class is the `HeatshrinkDecoder` object that can take in compressed data and turn it back into uncompressed data.
 
 ```typescript
+import { HeatshrinkEncoder } from "../src/heatshrink-encoder";
+import { HeatshrinkDecoder } from "../src/heatshrink-decoder";
 
-import { HeatshrinkDecoder } from "heatshrink-ts";
+const encoder = new HeatshrinkEncoder(12, 4);
+const decoder = new HeatshrinkDecoder(12, 4, 1024);
 
-const WINDOW_BITS = 8;
-const LOOKAHEAD_BITS = 4;
-const INPUT_BUFFER_LENGTH = 64;
+const text = "This is a test. This is a test. This is a test.";
+const input = Buffer.from(text, "utf8");
+const compressed = encoder.compress(input);
+console.log("Compressed bytes:", compressed.byteLength);
 
-// Heatshrink Encoded form of the ASCII string 'this is a test'
-let encodedInput = new Uint8Array([0xba, 0x5a, 0x2d, 0x37, 0x39, 0x00, 0x08, 0xac, 0x32, 0x0b, 0xa5, 0x96, 0xe7, 0x74]);
-
-let decoder = new HeatshrinkDecoder(WINDOW_BITS, LOOKAHEAD_BITS, INPUT_BUFFER_LENGTH);
-decoder.process(encodedInput);
-
-let output = decoder.getOutput();
-
-// This will print 'Decoded output: this is a test'
-let outputString = String.fromCharCode(...output);
-console.log("Decoded output: " + outputString);
+decoder.process(compressed);
+const out = decoder.getOutput();
+console.log(Buffer.from(out).toString("utf8"), text);
 ```
 
 There are 2 key parameters that need to match between the encoder and decoder:
